@@ -50,7 +50,7 @@ async def request_dwd_data(base_url: str, endpoint: str, additional_headers: dic
         try:
             response = await client.get(f"{base_url}{endpoint}", headers=headers, params=params)
             response.raise_for_status()
-            logging.info(f"Successfully fetched data from {base_url}{endpoint}")
+            logging.debug(f"Successfully fetched data from {base_url}{endpoint}")
             return response.json()
         except httpx.HTTPError as e:
             logging.error(f"Error fetching DWD data from {base_url}{endpoint}: {e}")
@@ -105,9 +105,36 @@ def main():
     parser = argparse.ArgumentParser(description="Run the Deutscher Wetterdienst FastMCP server")
     parser.add_argument("--host", type=str, default="0.0.0.0", help="Host IP to bind the HTTP server")
     parser.add_argument("--port", type=int, default=8823, help="Port number for the HTTP server")
+    parser.add_argument("--log-level", type=str, default="DEBUG", help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)")
     args = parser.parse_args()
 
+    # Configure logging with both stdout and file handlers
+    log_level = getattr(logging, args.log_level)
+    log_format = "%(levelname)s: %(message)s"
+    
+    # Create root logger
+    root_logger = logging.getLogger()
+    root_logger.setLevel(log_level)
+    
+    # Console handler (stdout)
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(log_level)
+    console_formatter = logging.Formatter(log_format)
+    console_handler.setFormatter(console_formatter)
+    root_logger.addHandler(console_handler)
+    
+    # File handler
+    logfile = "fastmcp_dwd.log"
+    file_handler = logging.FileHandler(logfile)
+    file_handler.setLevel(log_level)
+    file_formatter = logging.Formatter(log_format)
+    file_handler.setFormatter(file_formatter)
+    root_logger.addHandler(file_handler)
+    
+    root_logger.info(f"Logging configured:  level={args.log_level}, file={logfile}")
+    
     mcp.run(transport="http", host=args.host, port=args.port)
+    root_logger.info(f"Deutscher Wetterdienst FastMCP server is running on http://{args.host}:{args.port}")
 
 if __name__ == "__main__":
     main()

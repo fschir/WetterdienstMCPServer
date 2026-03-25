@@ -23,7 +23,7 @@ class ApiUrls:
 
 
 
-async def request_dwd_data(base_url: str, endpoint: str, additional_headers: dict = None, params:dict = None) -> Any:
+async def request_dwd_data(base_url: str, endpoint: str, additional_headers: dict | None = None, params:dict | None = None) -> Any:
     """
     Fetch data from the Deutscher Wetterdienst API.
 

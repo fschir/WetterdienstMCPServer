@@ -2,11 +2,11 @@
 
 FROM python:3.12-slim
 
-WORKDIR /app
+WORKDIR ${INSTALL_PATH:-.}/app
 
 # Copy application code
-COPY main.py /app/main.py
-COPY .github/copilot-instructions.md /app/.github/copilot-instructions.md
+COPY main.py ${INSTALL_PATH:-.}/app/main.py
+COPY ${INSTALL_PATH:-.}/.github/copilot-instructions.md ${INSTALL_PATH:-.}/app/.github/copilot-instructions.md
 
 # Install runtime dependencies
 RUN pip install --no-cache-dir fastmcp httpx

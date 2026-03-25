@@ -4,6 +4,8 @@ services:
     build: .
     container_name: mcpserver
     restart: unless-stopped
+    ports:
+      - "8823:8823"
     volumes:
       - .:/app:ro
     command: python main.py

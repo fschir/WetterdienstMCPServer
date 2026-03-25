@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  mcpserver:
+    build: .
+    container_name: mcpserver
+    restart: unless-stopped
+    volumes:
+      - .:/app:ro
+    command: python main.py
